@@ -19,6 +19,8 @@ logger.info("Up and running %s" % ' '.join(sys.argv))
 
 verbose = False
 
+START = 'XMLDOCUMENT'
+
 terminals = OrderedDict([
     ('(\<\?xml\ version=)', 'xml start'),
     ('(\?\>)', 'xml end'),
@@ -194,7 +196,7 @@ def process(input):
         print ""
 
     index = 0
-    stack.push('XMLDOCUMENT')
+    stack.push(START)
 
     while not stack.isEmpty():
         if verbose:
@@ -240,7 +242,6 @@ def demo():
     print '=== DEMO START ==='
 
     demo_test('<a><b></b></a>')
-    demo_test('<?xml version=1.2?><a><b></b></a>')
     demo_test('<?xml version=1.2?><a><b></b></a>')
     demo_test('<?xml version=1.2?><html><head><title>Toto je telo</title></head><body><br/></body></html>')
     demo_test('blabla')
