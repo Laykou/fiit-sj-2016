@@ -177,9 +177,46 @@ def tokenize(input):
                 break
 
         if not matched:
-            if verbose:
-                logger.error("Phrase is not valid - no terminal matching remaining part '%s'", remaining)
-            return False
+            if recovery:
+                # try to recover - skip all undefined symbols
+
+                nearest_terminal = None
+                nearest_name = None
+                nearest_dist = None
+                nearest_token = None
+
+                # find nearest matching terminal
+                for terminal, name in terminals.iteritems():
+                    match = re.search(terminal, remaining)
+
+                    if match:
+                        matched = True
+                        token = match.group(0)
+
+                        terminal_dist = match.start()
+                        if terminal_dist < nearest_dist or not nearest_dist:
+                            nearest_dist = terminal_dist
+                            nearest_terminal = terminal
+                            nearest_name = name
+                            nearest_token = token
+
+                if nearest_terminal:
+                    if verbose:
+                        print "\tSkipped '%s' - undefined symbol." % (remaining[:nearest_dist])
+                        print "\tMatched '%s' as nearest matching terminal, therefore adding '%s' to tokens" % (token, name)
+
+                    match = re.search(nearest_terminal, remaining)
+
+                    tokens.append(nearest_name)
+                    remaining = remaining[len(nearest_token)+nearest_dist:]
+
+            else:
+                if verbose:
+                    logger.error("Phrase is not valid - no terminal matching remaining part '%s'", remaining)
+
+                return False
+
+
 
     return tokens
 
@@ -241,18 +278,22 @@ def demo():
     print ''
     print '=== DEMO START ==='
 
-    demo_test('<a><b></b></a>')
-    demo_test('<?xml version=1.2?><a><b></b></a>')
-    demo_test('<?xml version=1.2?><html><head><title>Toto je telo</title></head><body><br/></body></html>')
-    demo_test('blabla')
-    demo_test('<?xml version=1.2?><html><head></html><br/></head>')
-    demo_test('<?xml version=1.2?><html>aaa<b></b></html>')
-    demo_test('<empty/>')
-    demo_test('<two></two><three></three>')
-    demo_test('<one><two></two><three></three></one>')
-    demo_test('<one><two></two><three>example</three></one>')
-    demo_test('<one><two></two><three><empty/></three></one>')
-    demo_test('<>')
+    #demo_test('<?xml version=1.2?><a><b></b></a>')
+    #demo_test('<?xml version=1.2?><html><head><title>Toto je telo</title></head><body><br/></body></html>')
+    #demo_test('blabla')
+    #demo_test('<?xml version=1.2?><html><head></html><br/></head>')
+    #demo_test('<?xml version=1.2?><html>aaa<b></b></html>')
+    #demo_test('<empty/>')
+    #demo_test('<two></two><three></three>')
+    #demo_test('<one><two></two><three></three></one>')
+    #demo_test('<one><two></two><three>example</three></one>')
+    #demo_test('<one><two></two><three><empty/></three></one>')
+    #demo_test('<>')
+    #demo_test('<?xmlversion=1.2?><html>aaa<b></b></html>')
+    #demo_test('<?xml version=1.2?><html>aaa<b></b></html>')
+    #demo_test('<?xml version=1.2?><html><head></html><br/></head>')
+    
+    demo_test('<a>*#<b></b></a>')
 
     print '=== DEMO END ==='
     print ''
@@ -260,11 +301,12 @@ def demo():
 if __name__ == '__main__':
     p = argparse.ArgumentParser()
     p.add_argument("-v", "--verbose", help="Increase output verbosity", action="store_true")
+    p.add_argument("-r", "--recovery", help="Enable lexical error recovery", action="store_true")
     args = p.parse_args()
 
     verbose = args.verbose
+    recovery = args.recovery
 
     demo()
-
-    for line in fileinput.input():
-        test(line)
+    #for line in fileinput.input():
+    #    test(line)
