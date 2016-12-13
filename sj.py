@@ -212,6 +212,9 @@ def process(input):
 
         top = stack.pop()
 
+        if index >= len(tokens):
+            return False
+
         if tokens[index] == top:
             if verbose:
                 print "\t\tRemoved element '%s' from stack and moving on input to %d" % (top, index + 1)
@@ -237,6 +240,7 @@ def process(input):
     return stack.isEmpty() and (index == len(tokens))
 
 def test(input):
+    print "'" + input + "'"
     print 'ACCEPT' if process(input) else 'REJECT'
 
 def demo_test(input):
@@ -276,5 +280,8 @@ if __name__ == '__main__':
 
     demo()
 
-    #for line in fileinput.input():
-    #    test(line)
+    verbose = True
+    recovery = True
+
+    for line in fileinput.input():
+        test(str(line).strip())
