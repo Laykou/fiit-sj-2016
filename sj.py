@@ -244,6 +244,7 @@ def test(input):
     print 'ACCEPT' if process(input) else 'REJECT'
 
 def demo_test(input):
+    print "'" + input + "'"
     test(input)
     print ''
 
@@ -251,6 +252,7 @@ def demo():
     print ''
     print '=== DEMO START ==='
 
+    demo_test('<a>Vincur je super</a>')
     demo_test('<a><b></b></a>')
     demo_test('<?xml version=1.2?><a><b></b></a>')
     demo_test('<?xml version=1.2?><html><head><title>Toto je telo</title></head><body><br/></body></html>')
