@@ -206,14 +206,15 @@ def process(input):
     stack.push(START)
 
     while not stack.isEmpty():
+        if index >= len(tokens):
+            print "\tEnd of input but stack not empty [%s]" % ', '.join(stack.items)
+            return False
+
         if verbose:
             print "\tCurrent index: %d [%s], stack: [%s]" % (index, tokens[index], ', '.join(stack.items))
-            print "\tRemaining tokens [%s]" % ', '.join(tokens[index::])
+            # print "\t\tRemaining tokens [%s]" % ', '.join(tokens[index::])
 
         top = stack.pop()
-
-        if index >= len(tokens):
-            return False
 
         if tokens[index] == top:
             if verbose:
@@ -240,11 +241,9 @@ def process(input):
     return stack.isEmpty() and (index == len(tokens))
 
 def test(input):
-    print "'" + input + "'"
     print 'ACCEPT' if process(input) else 'REJECT'
 
 def demo_test(input):
-    print input
     test(input)
     print ''
 
@@ -280,8 +279,5 @@ if __name__ == '__main__':
 
     demo()
 
-    verbose = True
-    recovery = True
-
-    for line in fileinput.input():
+    for line in fileinput.input('-'):
         test(str(line).strip())
