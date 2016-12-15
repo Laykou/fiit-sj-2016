@@ -179,7 +179,6 @@ def tokenize(input):
 
         if not matched:
             if recovery:
-                # try to recover - skip undefined symbol
                 if verbose:
                     print "\tSkipped '%s' - undefined symbol." % (remaining[0])
                 remaining = remaining[1:]
@@ -252,7 +251,6 @@ def demo():
     print ''
     print '=== DEMO START ==='
 
-    demo_test('<a>Vincur je super</a>')
     demo_test('<a><b></b></a>')
     demo_test('<?xml version=1.2?><a><b></b></a>')
     demo_test('<?xml version=1.2?><html><head><title>Toto je telo</title></head><body><br/></body></html>')
